@@ -28,6 +28,12 @@ function reducer(state, action) {
                     .map(trajet => trajet === action.target ? action.payload : trajet)
             }
 
+        case "SET_MESSAGE":
+            return { ...state, message: action.payload }
+
+        case "SET_ERROR":
+            return { ...state, error: action.payload }
+
         default:
             return state;
     }
@@ -36,11 +42,15 @@ function reducer(state, action) {
 export function useTrajetsConducteur() {
     const [state, dispatch] = useReducer(reducer, {
         trajetsConducteur: null,
-        loading: false
+        loading: false,
+        message: null,
+        error: null
     })
 
     return {
         trajetsConducteur: state.trajetsConducteur,
+        message: state.message,
+        error: state.error,
         fetchTrajetConducteur: async () => {
             if (state.loading || state.trajetsConducteur) {
                 return
@@ -48,21 +58,37 @@ export function useTrajetsConducteur() {
             dispatch({
                 type: 'FETCHING_TRAJETS_CONDUCTEUR'
             })
-            const trajetsConducteur = await apiFetch('/listeInscriptionConducteur/' + userId, {
-                method: 'GET'
-            })
-            dispatch({
-                type: 'SET_TRAJETS_CONDUCTEUR',
-                payload: trajetsConducteur
-            })
+            try {
+                const trajetsConducteur = await apiFetch('/listeInscriptionConducteur/' + userId, {
+                    method: 'GET'
+                })
+                dispatch({
+                    type: 'SET_TRAJETS_CONDUCTEUR',
+                    payload: trajetsConducteur
+                })
+            } catch (error) {
+                dispatch({
+                    type: 'SET_ERROR',
+                    payload: error.errors.error
+                })
+                dispatch({
+                    type: 'SET_TRAJETS_CONDUCTEUR',
+                    payload: null
+                })
+            }
+
         },
         deleteTrajetConducteur: async (trajet) => {
-            await apiFetch('/deleteTrajet/' + trajet.id, {
+            const response = await apiFetch('/deleteTrajet/' + trajet.id, {
                 method: 'DELETE'
             })
             dispatch({
                 type: 'DELETE_TRAJET_CONDUCTEUR',
                 payload: trajet
+            })
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: response.message
             })
         },
         addTrajetConducteur: async (trajet) => {
@@ -74,6 +100,10 @@ export function useTrajetsConducteur() {
                 type: 'ADD_TRAJET_CONDUCTEUR',
                 payload: trajet
             })
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: response.message
+            })
         },
         updateTrajetConducteur: async (trajet) => {
             await apiFetch('/updateTrajet/' + trajet.id, {
@@ -83,6 +113,10 @@ export function useTrajetsConducteur() {
             dispatch({
                 type: 'UPDATE_TRAJET_CONDUCTEUR',
                 payload: trajet
+            })
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: response.message
             })
         }
     }

@@ -3,6 +3,7 @@
 * It's intended for prototyping only.
 */
 @import "https://cdn.jsdelivr.net/npm/@radix-ui/colors@latest/cyan.css";
+@import "https://cdn.jsdelivr.net/npm/@radix-ui/colors@latest/violet.css";
 @import "https://cdn.jsdelivr.net/npm/@radix-ui/colors@latest/blue.css";
 @import "https://cdn.jsdelivr.net/npm/@radix-ui/colors@latest/green.css";
 @import "https://cdn.jsdelivr.net/npm/@radix-ui/colors@latest/yellow.css";
@@ -10,18 +11,18 @@
 @import url("https://fonts.googleapis.com/css?family=Righteous:700|Righteous:400");
 
 :root {
-  --accent-base: var(--cyan-1);
-  --accent-bg-subtle: var(--cyan-2);
-  --accent-bg: var(--cyan-3);
-  --accent-bg-hover: var(--cyan-4);
-  --accent-bg-active: var(--cyan-5);
-  --accent-line: var(--cyan-6);
-  --accent-border: var(--cyan-7);
-  --accent-border-hover: var(--cyan-8);
-  --accent-solid: var(--cyan-9);
-  --accent-solid-hover: var(--cyan-10);
-  --accent-text: var(--cyan-11);
-  --accent-text-contrast: var(--cyan-12);
+  --accent-base: var(--violet-1);
+  --accent-bg-subtle: var(--violet-2);
+  --accent-bg: var(--violet-3);
+  --accent-bg-hover: var(--violet-4);
+  --accent-bg-active: var(--violet-5);
+  --accent-line: var(--violet-6);
+  --accent-border: var(--violet-7);
+  --accent-border-hover: var(--violet-8);
+  --accent-solid: var(--violet-9);
+  --accent-solid-hover: var(--violet-10);
+  --accent-text: var(--violet-11);
+  --accent-text-contrast: var(--violet-12);
 
   --success-base: var(--green-1);
   --success-bg-subtle: var(--green-2);
@@ -117,8 +118,6 @@ small {
 }
 
 .footer {
-  background: var(--accent-solid);
-  color: var(--accent-base);
 }
 
 .footer a {

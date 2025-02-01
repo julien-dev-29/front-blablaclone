@@ -3,19 +3,14 @@ import Button from '../../ui/Button'
 
 export const Trajet = ({ trajet, onDelete, onRegister, onMessage, isTrajetPage, isMesTrajetsPage, onError }) => {
     const [loading, setLoading] = useState(false)
+    /** */
     const handleDelete = async (e) => {
         e.preventDefault()
         setLoading(true)
-        try {
-            const message = await onDelete(trajet)
-            const messageData = await message.json()
-            onMessage(messageData)
-        } catch (error) {
-            console.log(error)
-        }
-
+        await onDelete(trajet)
         setLoading(false)
     }
+    /** */
     const handleRegister = async (e) => {
         e.preventDefault()
         setLoading(true)

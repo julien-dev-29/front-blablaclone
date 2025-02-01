@@ -14,7 +14,7 @@ import { Admin } from './Admin'
 export default Site = () => {
     const [page, setPage] = useState('trajets')
     const { fetchTrajets, deleteTrajet } = useTrajets()
-    const { trajetsConducteur, fetchTrajetConducteur, deleteTrajetConducteur } = useTrajetsConducteur()
+    const { trajetsConducteur, fetchTrajetConducteur, deleteTrajetConducteur, message, error } = useTrajetsConducteur()
     const { trajetsPassager, fetchTrajetPassager, deleteTrajetPassager } = useTrajetsPassager()
 
     var content = null
@@ -33,7 +33,10 @@ export default Site = () => {
                 trajetsPassager={trajetsPassager}
                 onDeleteTrajetPassager={deleteTrajetPassager}
                 trajetsConducteur={trajetsConducteur}
-                onDeleteTrajetConducteur={deleteTrajetConducteur} />
+                onDeleteTrajetConducteur={deleteTrajetConducteur}
+                message={message}
+                error={error}
+            />
             break
         case 'create-trajet':
             content = <CreateTrajet />

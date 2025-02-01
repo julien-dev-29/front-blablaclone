@@ -4,13 +4,11 @@ import { useTrajetsConducteur } from '../../hooks/trajetsConducteur'
 import { apiFetch } from '../../utils/api'
 
 export const CreateTrajet = () => {
-    const [message, setMessage] = useState(null)
-    const [loading, setLoading] = useState(false)
-    const { addTrajetConducteur } = useTrajetsConducteur()
+    const { message } = useTrajetsConducteur()
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        setError(null)
+        setMessage(null)
         setLoading(true)
         const formData = new FormData(e.target)
         const trajet = {
@@ -29,8 +27,7 @@ export const CreateTrajet = () => {
             const messageData = await message.json()
             setMessage(messageData.message)
         } catch (error) {
-            console.log(error.errors.error)
-            setMessage(error.errors.error)
+            setMessage(error)
         }
     }
     return (

@@ -29,14 +29,9 @@ export async function apiFetch(endpoint, options = {}) {
     if (response.status > 309 && response.status < 500) {
         throw new ApiError(await response.json())
     }
-
     const responseData = await response.json()
-    console.log('apiFetch: ' + responseData.error);
-    if (response.ok) {
-        return responseData
-    } else {
-        throw new ApiError(responseData.message)
-    }
+    console.log('apiFetch: ', JSON.stringify(responseData));
+    return responseData
 }
 
 export async function register(trajet) {

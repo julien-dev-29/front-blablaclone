@@ -19556,9 +19556,8 @@ async function apiFetch(endpoint, options = {}) {
     });
     if (response.status > 309 && response.status < 500) throw new ApiError(await response.json());
     const responseData = await response.json();
-    console.log('apiFetch: ' + responseData.error);
-    if (response.ok) return responseData;
-    else throw new ApiError(responseData.message);
+    console.log('apiFetch: ', JSON.stringify(responseData));
+    return responseData;
 }
 async function register(trajet) {
     const response = await apiFetch('/insertInscription', {
@@ -20354,7 +20353,7 @@ exports.default = Site = _s(()=>{
     _s();
     const [page, setPage] = (0, _react.useState)('trajets');
     const { fetchTrajets, deleteTrajet } = (0, _trajets1.useTrajets)();
-    const { trajetsConducteur, fetchTrajetConducteur, deleteTrajetConducteur } = (0, _trajetsConducteur.useTrajetsConducteur)();
+    const { trajetsConducteur, fetchTrajetConducteur, deleteTrajetConducteur, message, error } = (0, _trajetsConducteur.useTrajetsConducteur)();
     const { trajetsPassager, fetchTrajetPassager, deleteTrajetPassager } = (0, _trajetsPassager.useTrajetsPassager)();
     var content = null;
     // Render content based on page
@@ -20381,7 +20380,9 @@ exports.default = Site = _s(()=>{
                 trajetsPassager: trajetsPassager,
                 onDeleteTrajetPassager: deleteTrajetPassager,
                 trajetsConducteur: trajetsConducteur,
-                onDeleteTrajetConducteur: deleteTrajetConducteur
+                onDeleteTrajetConducteur: deleteTrajetConducteur,
+                message: message,
+                error: error
             }, void 0, false, {
                 fileName: "src/App/Site.jsx",
                 lineNumber: 32,
@@ -20391,7 +20392,7 @@ exports.default = Site = _s(()=>{
         case 'create-trajet':
             content = /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _createTrajet.CreateTrajet), {}, void 0, false, {
                 fileName: "src/App/Site.jsx",
-                lineNumber: 39,
+                lineNumber: 42,
                 columnNumber: 23
             }, undefined);
             break;
@@ -20420,7 +20421,7 @@ exports.default = Site = _s(()=>{
                 onClick: setPage
             }, void 0, false, {
                 fileName: "src/App/Site.jsx",
-                lineNumber: 62,
+                lineNumber: 65,
                 columnNumber: 13
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -20428,17 +20429,17 @@ exports.default = Site = _s(()=>{
                 children: content
             }, void 0, false, {
                 fileName: "src/App/Site.jsx",
-                lineNumber: 63,
+                lineNumber: 66,
                 columnNumber: 13
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _footer.Footer), {}, void 0, false, {
                 fileName: "src/App/Site.jsx",
-                lineNumber: 66,
+                lineNumber: 69,
                 columnNumber: 13
             }, undefined)
         ]
     }, void 0, true);
-}, "d6iua0Kl+nLMS5YpTF2Sz4S0g2M=", false, function() {
+}, "275wTCTxfWSlQ5ofdCFrqLbdO5Y=", false, function() {
     return [
         (0, _trajets1.useTrajets),
         (0, _trajetsConducteur.useTrajetsConducteur),
@@ -20571,7 +20572,7 @@ var _jsxDevRuntime = require("react/jsx-dev-runtime");
 var _trajetJsx = require("./Trajet.jsx");
 const TrajetList = ({ trajets, onDelete, onRegister, isTrajetPage, onError, isMesTrajetsPage, onMessage })=>{
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
-        children: trajets.map((trajet)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _trajetJsx.Trajet), {
+        children: Array.isArray(trajets) && trajets.length > 0 ? trajets.map((trajet)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _trajetJsx.Trajet), {
                 onError: onError,
                 trajet: trajet,
                 onRegister: onRegister,
@@ -20581,9 +20582,15 @@ const TrajetList = ({ trajets, onDelete, onRegister, isTrajetPage, onError, isMe
                 onDelete: onDelete
             }, trajet.id, false, {
                 fileName: "src/App/trajets/TrajetList.jsx",
-                lineNumber: 6,
-                columnNumber: 36
-            }, undefined))
+                lineNumber: 8,
+                columnNumber: 21
+            }, undefined)) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+            children: "No trajets available"
+        }, void 0, false, {
+            fileName: "src/App/trajets/TrajetList.jsx",
+            lineNumber: 20,
+            columnNumber: 17
+        }, undefined)
     }, void 0, false);
 };
 _c = TrajetList;
@@ -20614,19 +20621,13 @@ var _s = $RefreshSig$();
 const Trajet = ({ trajet, onDelete, onRegister, onMessage, isTrajetPage, isMesTrajetsPage, onError })=>{
     _s();
     const [loading, setLoading] = (0, _react.useState)(false);
-    const handleDelete = async (e)=>{
+    /** */ const handleDelete = async (e)=>{
         e.preventDefault();
         setLoading(true);
-        try {
-            const message = await onDelete(trajet);
-            const messageData = await message.json();
-            onMessage(messageData);
-        } catch (error) {
-            console.log(error);
-        }
+        await onDelete(trajet);
         setLoading(false);
     };
-    const handleRegister = async (e)=>{
+    /** */ const handleRegister = async (e)=>{
         e.preventDefault();
         setLoading(true);
         try {
@@ -20651,7 +20652,7 @@ const Trajet = ({ trajet, onDelete, onRegister, onMessage, isTrajetPage, isMesTr
                     ]
                 }, void 0, true, {
                     fileName: "src/App/trajets/Trajet.jsx",
-                    lineNumber: 34,
+                    lineNumber: 29,
                     columnNumber: 17
                 }, undefined),
                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -20659,7 +20660,7 @@ const Trajet = ({ trajet, onDelete, onRegister, onMessage, isTrajetPage, isMesTr
                     children: "Some quick example text to build on the card title and make up the bulk of the card's content."
                 }, void 0, false, {
                     fileName: "src/App/trajets/Trajet.jsx",
-                    lineNumber: 35,
+                    lineNumber: 30,
                     columnNumber: 17
                 }, undefined),
                 isMesTrajetsPage && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _buttonDefault.default), {
@@ -20670,7 +20671,7 @@ const Trajet = ({ trajet, onDelete, onRegister, onMessage, isTrajetPage, isMesTr
                     children: "Supprimer"
                 }, void 0, false, {
                     fileName: "src/App/trajets/Trajet.jsx",
-                    lineNumber: 36,
+                    lineNumber: 31,
                     columnNumber: 38
                 }, undefined),
                 isTrajetPage && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _buttonDefault.default), {
@@ -20681,18 +20682,18 @@ const Trajet = ({ trajet, onDelete, onRegister, onMessage, isTrajetPage, isMesTr
                     children: "S'inscrire"
                 }, void 0, false, {
                     fileName: "src/App/trajets/Trajet.jsx",
-                    lineNumber: 37,
+                    lineNumber: 32,
                     columnNumber: 34
                 }, undefined)
             ]
         }, void 0, true, {
             fileName: "src/App/trajets/Trajet.jsx",
-            lineNumber: 33,
+            lineNumber: 28,
             columnNumber: 13
         }, undefined)
     }, void 0, false, {
         fileName: "src/App/trajets/Trajet.jsx",
-        lineNumber: 32,
+        lineNumber: 27,
         columnNumber: 9
     }, undefined);
 };
@@ -20915,13 +20916,7 @@ var _react = require("react");
 var _reactDefault = parcelHelpers.interopDefault(_react);
 var _trajetList = require("./TrajetList");
 var _loader = require("../../ui/Loader");
-var _s = $RefreshSig$();
-const MesTrajets = ({ trajetsPassager, deleteTrajetPassager, trajetsConducteur, onDeleteTrajetConducteur })=>{
-    _s();
-    const [message, setMessage] = (0, _react.useState)(null);
-    const handleMessage = (message)=>{
-        setMessage(message);
-    };
+const MesTrajets = ({ trajetsPassager, trajetsConducteur, message, error, onDeleteTrajetPassager, onDeleteTrajetConducteur })=>{
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
             className: "container p-5",
@@ -20931,63 +20926,69 @@ const MesTrajets = ({ trajetsPassager, deleteTrajetPassager, trajetsConducteur, 
                     children: message
                 }, void 0, false, {
                     fileName: "src/App/trajets/MesTrajets.jsx",
-                    lineNumber: 14,
+                    lineNumber: 9,
                     columnNumber: 21
+                }, undefined),
+                error && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                    className: "alert alert-danger",
+                    children: error
+                }, void 0, false, {
+                    fileName: "src/App/trajets/MesTrajets.jsx",
+                    lineNumber: 10,
+                    columnNumber: 19
                 }, undefined),
                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h2", {
                     children: "Mes Trajets Conducteur"
                 }, void 0, false, {
                     fileName: "src/App/trajets/MesTrajets.jsx",
-                    lineNumber: 15,
+                    lineNumber: 11,
                     columnNumber: 9
                 }, undefined),
                 trajetsConducteur === null ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _loader.Loader), {}, void 0, false, {
                     fileName: "src/App/trajets/MesTrajets.jsx",
-                    lineNumber: 16,
+                    lineNumber: 12,
                     columnNumber: 39
                 }, undefined) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _trajetList.TrajetList), {
                     isMesTrajetsPage: true,
                     trajets: trajetsConducteur,
-                    onMessage: handleMessage,
                     onDelete: onDeleteTrajetConducteur
                 }, void 0, false, {
                     fileName: "src/App/trajets/MesTrajets.jsx",
-                    lineNumber: 16,
+                    lineNumber: 12,
                     columnNumber: 52
                 }, undefined),
                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h2", {
                     children: "Mes Trajets Passager"
                 }, void 0, false, {
                     fileName: "src/App/trajets/MesTrajets.jsx",
-                    lineNumber: 17,
+                    lineNumber: 13,
                     columnNumber: 9
                 }, undefined),
                 trajetsPassager === null ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _loader.Loader), {}, void 0, false, {
                     fileName: "src/App/trajets/MesTrajets.jsx",
-                    lineNumber: 18,
+                    lineNumber: 14,
                     columnNumber: 37
                 }, undefined) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _trajetList.TrajetList), {
                     isMesTrajetsPage: true,
                     trajets: trajetsPassager,
-                    onDelete: deleteTrajetPassager
+                    onDelete: onDeleteTrajetPassager
                 }, void 0, false, {
                     fileName: "src/App/trajets/MesTrajets.jsx",
-                    lineNumber: 18,
+                    lineNumber: 14,
                     columnNumber: 50
                 }, undefined)
             ]
         }, void 0, true, {
             fileName: "src/App/trajets/MesTrajets.jsx",
-            lineNumber: 13,
+            lineNumber: 8,
             columnNumber: 7
         }, undefined)
     }, void 0, false, {
         fileName: "src/App/trajets/MesTrajets.jsx",
-        lineNumber: 12,
+        lineNumber: 7,
         columnNumber: 5
     }, undefined);
 };
-_s(MesTrajets, "oxT8SEz5FIjvFP5ix50Ku0sapH4=");
 _c = MesTrajets;
 var _c;
 $RefreshReg$(_c, "MesTrajets");
@@ -21108,12 +21109,10 @@ var _api = require("../../utils/api");
 var _s = $RefreshSig$();
 const CreateTrajet = ()=>{
     _s();
-    const [message, setMessage] = (0, _react.useState)(null);
-    const [loading, setLoading] = (0, _react.useState)(false);
-    const { addTrajetConducteur } = (0, _trajetsConducteur.useTrajetsConducteur)();
+    const { message } = (0, _trajetsConducteur.useTrajetsConducteur)();
     const handleSubmit = async (e)=>{
         e.preventDefault();
-        setError(null);
+        setMessage(null);
         setLoading(true);
         const formData = new FormData(e.target);
         const trajet = {
@@ -21132,8 +21131,7 @@ const CreateTrajet = ()=>{
             const messageData = await message.json();
             setMessage(messageData.message);
         } catch (error) {
-            console.log(error.errors.error);
-            setMessage(error.errors.error);
+            setMessage(error);
         }
     };
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21144,7 +21142,7 @@ const CreateTrajet = ()=>{
                     children: "Publier Un Trajet"
                 }, void 0, false, {
                     fileName: "src/App/trajets/CreateTrajet.jsx",
-                    lineNumber: 39,
+                    lineNumber: 36,
                     columnNumber: 17
                 }, undefined),
                 message && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21152,7 +21150,7 @@ const CreateTrajet = ()=>{
                     children: message
                 }, void 0, false, {
                     fileName: "src/App/trajets/CreateTrajet.jsx",
-                    lineNumber: 40,
+                    lineNumber: 37,
                     columnNumber: 29
                 }, undefined),
                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("form", {
@@ -21171,7 +21169,7 @@ const CreateTrajet = ()=>{
                                                 children: "Ville de d\xe9part"
                                             }, void 0, false, {
                                                 fileName: "src/App/trajets/CreateTrajet.jsx",
-                                                lineNumber: 45,
+                                                lineNumber: 42,
                                                 columnNumber: 33
                                             }, undefined),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
@@ -21183,18 +21181,18 @@ const CreateTrajet = ()=>{
                                                 placeholder: ""
                                             }, void 0, false, {
                                                 fileName: "src/App/trajets/CreateTrajet.jsx",
-                                                lineNumber: 46,
+                                                lineNumber: 43,
                                                 columnNumber: 33
                                             }, undefined)
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/App/trajets/CreateTrajet.jsx",
-                                        lineNumber: 44,
+                                        lineNumber: 41,
                                         columnNumber: 29
                                     }, undefined)
                                 }, void 0, false, {
                                     fileName: "src/App/trajets/CreateTrajet.jsx",
-                                    lineNumber: 43,
+                                    lineNumber: 40,
                                     columnNumber: 25
                                 }, undefined),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21207,7 +21205,7 @@ const CreateTrajet = ()=>{
                                                 children: "Ville d'arriv\xe9e"
                                             }, void 0, false, {
                                                 fileName: "src/App/trajets/CreateTrajet.jsx",
-                                                lineNumber: 51,
+                                                lineNumber: 48,
                                                 columnNumber: 33
                                             }, undefined),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
@@ -21219,24 +21217,24 @@ const CreateTrajet = ()=>{
                                                 placeholder: ""
                                             }, void 0, false, {
                                                 fileName: "src/App/trajets/CreateTrajet.jsx",
-                                                lineNumber: 52,
+                                                lineNumber: 49,
                                                 columnNumber: 33
                                             }, undefined)
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/App/trajets/CreateTrajet.jsx",
-                                        lineNumber: 50,
+                                        lineNumber: 47,
                                         columnNumber: 29
                                     }, undefined)
                                 }, void 0, false, {
                                     fileName: "src/App/trajets/CreateTrajet.jsx",
-                                    lineNumber: 49,
+                                    lineNumber: 46,
                                     columnNumber: 25
                                 }, undefined)
                             ]
                         }, void 0, true, {
                             fileName: "src/App/trajets/CreateTrajet.jsx",
-                            lineNumber: 42,
+                            lineNumber: 39,
                             columnNumber: 21
                         }, undefined),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21252,7 +21250,7 @@ const CreateTrajet = ()=>{
                                                 children: "Date"
                                             }, void 0, false, {
                                                 fileName: "src/App/trajets/CreateTrajet.jsx",
-                                                lineNumber: 59,
+                                                lineNumber: 56,
                                                 columnNumber: 33
                                             }, undefined),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
@@ -21264,18 +21262,18 @@ const CreateTrajet = ()=>{
                                                 placeholder: "name@example.com"
                                             }, void 0, false, {
                                                 fileName: "src/App/trajets/CreateTrajet.jsx",
-                                                lineNumber: 60,
+                                                lineNumber: 57,
                                                 columnNumber: 33
                                             }, undefined)
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/App/trajets/CreateTrajet.jsx",
-                                        lineNumber: 58,
+                                        lineNumber: 55,
                                         columnNumber: 29
                                     }, undefined)
                                 }, void 0, false, {
                                     fileName: "src/App/trajets/CreateTrajet.jsx",
-                                    lineNumber: 57,
+                                    lineNumber: 54,
                                     columnNumber: 25
                                 }, undefined),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21288,7 +21286,7 @@ const CreateTrajet = ()=>{
                                                 children: "Heure"
                                             }, void 0, false, {
                                                 fileName: "src/App/trajets/CreateTrajet.jsx",
-                                                lineNumber: 65,
+                                                lineNumber: 62,
                                                 columnNumber: 33
                                             }, undefined),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
@@ -21300,24 +21298,24 @@ const CreateTrajet = ()=>{
                                                 placeholder: "name@example.com"
                                             }, void 0, false, {
                                                 fileName: "src/App/trajets/CreateTrajet.jsx",
-                                                lineNumber: 66,
+                                                lineNumber: 63,
                                                 columnNumber: 33
                                             }, undefined)
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/App/trajets/CreateTrajet.jsx",
-                                        lineNumber: 64,
+                                        lineNumber: 61,
                                         columnNumber: 29
                                     }, undefined)
                                 }, void 0, false, {
                                     fileName: "src/App/trajets/CreateTrajet.jsx",
-                                    lineNumber: 63,
+                                    lineNumber: 60,
                                     columnNumber: 25
                                 }, undefined)
                             ]
                         }, void 0, true, {
                             fileName: "src/App/trajets/CreateTrajet.jsx",
-                            lineNumber: 56,
+                            lineNumber: 53,
                             columnNumber: 21
                         }, undefined),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21332,7 +21330,7 @@ const CreateTrajet = ()=>{
                                             children: "Distance"
                                         }, void 0, false, {
                                             fileName: "src/App/trajets/CreateTrajet.jsx",
-                                            lineNumber: 73,
+                                            lineNumber: 70,
                                             columnNumber: 33
                                         }, undefined),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
@@ -21344,23 +21342,23 @@ const CreateTrajet = ()=>{
                                             placeholder: ""
                                         }, void 0, false, {
                                             fileName: "src/App/trajets/CreateTrajet.jsx",
-                                            lineNumber: 74,
+                                            lineNumber: 71,
                                             columnNumber: 33
                                         }, undefined)
                                     ]
                                 }, void 0, true, {
                                     fileName: "src/App/trajets/CreateTrajet.jsx",
-                                    lineNumber: 72,
+                                    lineNumber: 69,
                                     columnNumber: 29
                                 }, undefined)
                             }, void 0, false, {
                                 fileName: "src/App/trajets/CreateTrajet.jsx",
-                                lineNumber: 71,
+                                lineNumber: 68,
                                 columnNumber: 25
                             }, undefined)
                         }, void 0, false, {
                             fileName: "src/App/trajets/CreateTrajet.jsx",
-                            lineNumber: 70,
+                            lineNumber: 67,
                             columnNumber: 21
                         }, undefined),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _buttonDefault.default), {
@@ -21368,28 +21366,28 @@ const CreateTrajet = ()=>{
                             children: "Publier"
                         }, void 0, false, {
                             fileName: "src/App/trajets/CreateTrajet.jsx",
-                            lineNumber: 78,
+                            lineNumber: 75,
                             columnNumber: 21
                         }, undefined)
                     ]
                 }, void 0, true, {
                     fileName: "src/App/trajets/CreateTrajet.jsx",
-                    lineNumber: 41,
+                    lineNumber: 38,
                     columnNumber: 17
                 }, undefined)
             ]
         }, void 0, true, {
             fileName: "src/App/trajets/CreateTrajet.jsx",
-            lineNumber: 38,
+            lineNumber: 35,
             columnNumber: 13
         }, undefined)
     }, void 0, false, {
         fileName: "src/App/trajets/CreateTrajet.jsx",
-        lineNumber: 37,
+        lineNumber: 34,
         columnNumber: 9
     }, undefined);
 };
-_s(CreateTrajet, "oaUVR7u10PGJxqaVc+avNRUtaeQ=", false, function() {
+_s(CreateTrajet, "59fHZIAyrzrOEJ0wqhEZlKMHtbY=", false, function() {
     return [
         (0, _trajetsConducteur.useTrajetsConducteur)
     ];
@@ -21449,6 +21447,16 @@ function reducer(state, action) {
                 ...state,
                 trajetsConducteur: state.trajetsConducteur.map((trajet)=>trajet === action.target ? action.payload : trajet)
             };
+        case "SET_MESSAGE":
+            return {
+                ...state,
+                message: action.payload
+            };
+        case "SET_ERROR":
+            return {
+                ...state,
+                error: action.payload
+            };
         default:
             return state;
     }
@@ -21457,30 +21465,49 @@ function useTrajetsConducteur() {
     _s();
     const [state, dispatch] = (0, _react.useReducer)(reducer, {
         trajetsConducteur: null,
-        loading: false
+        loading: false,
+        message: null,
+        error: null
     });
     return {
         trajetsConducteur: state.trajetsConducteur,
+        message: state.message,
+        error: state.error,
         fetchTrajetConducteur: async ()=>{
             if (state.loading || state.trajetsConducteur) return;
             dispatch({
                 type: 'FETCHING_TRAJETS_CONDUCTEUR'
             });
-            const trajetsConducteur = await (0, _api.apiFetch)('/listeInscriptionConducteur/' + userId, {
-                method: 'GET'
-            });
-            dispatch({
-                type: 'SET_TRAJETS_CONDUCTEUR',
-                payload: trajetsConducteur
-            });
+            try {
+                const trajetsConducteur = await (0, _api.apiFetch)('/listeInscriptionConducteur/' + userId, {
+                    method: 'GET'
+                });
+                dispatch({
+                    type: 'SET_TRAJETS_CONDUCTEUR',
+                    payload: trajetsConducteur
+                });
+            } catch (error) {
+                dispatch({
+                    type: 'SET_ERROR',
+                    payload: error.errors.error
+                });
+                dispatch({
+                    type: 'SET_TRAJETS_CONDUCTEUR',
+                    payload: null
+                });
+            }
         },
         deleteTrajetConducteur: async (trajet)=>{
-            await (0, _api.apiFetch)('/deleteTrajet/' + trajet.id, {
+            const response1 = await (0, _api.apiFetch)('/deleteTrajet/' + trajet.id, {
                 method: 'DELETE'
             });
             dispatch({
                 type: 'DELETE_TRAJET_CONDUCTEUR',
                 payload: trajet
+            });
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: response1.message
             });
         },
         addTrajetConducteur: async (trajet)=>{
@@ -21492,6 +21519,10 @@ function useTrajetsConducteur() {
                 type: 'ADD_TRAJET_CONDUCTEUR',
                 payload: trajet
             });
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: response.message
+            });
         },
         updateTrajetConducteur: async (trajet)=>{
             await (0, _api.apiFetch)('/updateTrajet/' + trajet.id, {
@@ -21502,10 +21533,14 @@ function useTrajetsConducteur() {
                 type: 'UPDATE_TRAJET_CONDUCTEUR',
                 payload: trajet
             });
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: response.message
+            });
         }
     };
 }
-_s(useTrajetsConducteur, "3nxXsPB4a7nTduMSls+JJrnqZ5I=");
+_s(useTrajetsConducteur, "edxHt03uqbkZ0Rnl4jDRfwjFWcA=");
 
   $parcel$ReactRefreshHelpers$da05.postlude(module);
 } finally {
@@ -22265,23 +22300,22 @@ parcelHelpers.export(exports, "Admin", ()=>Admin);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
 var _react = require("react");
 var _reactDefault = parcelHelpers.interopDefault(_react);
-var _api = require("../utils/api");
-var _s = $RefreshSig$();
 const Admin = ()=>{
-    _s();
-    (0, _react.useEffect)(()=>{
-        const token = "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";
-        const response = (0, _api.apiFetch)();
-    }, []);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-        children: "Admin"
+        className: "container ",
+        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h1", {
+            children: "Admin"
+        }, void 0, false, {
+            fileName: "src/App/Admin.jsx",
+            lineNumber: 7,
+            columnNumber: 13
+        }, undefined)
     }, void 0, false, {
         fileName: "src/App/Admin.jsx",
-        lineNumber: 11,
+        lineNumber: 6,
         columnNumber: 9
     }, undefined);
 };
-_s(Admin, "OD7bBpZva5O2jO+Puf00hKivP7c=");
 _c = Admin;
 var _c;
 $RefreshReg$(_c, "Admin");
@@ -22291,6 +22325,6 @@ $RefreshReg$(_c, "Admin");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../utils/api":"gsqud"}],"irmnC":[function() {},{}],"jJvnD":[function() {},{}]},["aQL8O","9mu7C","8lqZg"], "8lqZg", "parcelRequire94c2")
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"irmnC":[function() {},{}],"jJvnD":[function() {},{}]},["aQL8O","9mu7C","8lqZg"], "8lqZg", "parcelRequire94c2")
 
 //# sourceMappingURL=index.975ef6c8.js.map
